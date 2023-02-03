@@ -29,13 +29,13 @@
     "src"
   ],
   "dependencies": {
-    "@playwright/test": "1.22.2",
+    "@playwright/test": "1.25.2",
     "fs-extra": "^9.0.8"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.8",
     "allure-commandline": "^2.13.8",
-    "allure-playwright": "^2.0.0-beta.14"
+    "allure-playwright": "^2.0.0-beta.19"
   },
   "publishConfig": {
     "access": "public"
