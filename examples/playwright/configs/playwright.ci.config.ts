@@ -19,7 +19,7 @@ import baseConfig from './playwright.config';
 
 const ciConfig: PlaywrightTestConfig = {
     ...baseConfig,
-    workers: 1,
+    // workers: 1,
     retries: 1
 };
 

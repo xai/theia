@@ -19,18 +19,17 @@ import { PlaywrightTestConfig } from '@playwright/test';
 const config: PlaywrightTestConfig = {
     testDir: '../lib/tests',
     testMatch: ['**/*.js'],
-    workers: 2,
+    workers: 3,
     // Timeout for each test in milliseconds.
     timeout: 60 * 1000,
     use: {
         baseURL: 'http://localhost:3000',
         browserName: 'chromium',
         screenshot: 'only-on-failure',
-        viewport: { width: 1920, height: 1080 }
-    },
-    snapshotDir: '../src/tests/snapshots',
-    expect: {
-        toMatchSnapshot: { threshold: 0.15 }
+        viewport: { width: 1920, height: 1080 },
+        trace: {
+            mode: 'retain-on-failure'
+        }
     },
     preserveOutput: 'failures-only',
     reporter: [

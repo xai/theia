@@ -18,6 +18,7 @@
     "theia:start": "rimraf .tmp.cfg && THEIA_CONFIG_DIR=$PWD/.tmp.cfg yarn --cwd ../browser start",
     "lint": "eslint -c ./.eslintrc.js --ext .ts ./src",
     "lint:fix": "eslint -c ./.eslintrc.js --ext .ts ./src --fix",
+    "watch": "tsc --watch",
     "ui-tests": "yarn && playwright test --config=./configs/playwright.config.ts",
     "ui-tests-ci": "yarn && playwright test --config=./configs/playwright.ci.config.ts",
     "ui-tests-headful": "yarn && playwright test --config=./configs/playwright.headful.config.ts",

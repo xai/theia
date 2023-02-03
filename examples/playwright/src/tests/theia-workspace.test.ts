@@ -14,33 +14,32 @@
 // SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
 // *****************************************************************************
 
-import { TheiaApp } from '../theia-app';
+import { expect, test } from '@playwright/test';
+import { TheiaBrowserAppLoader } from '../theia-app-loader';
 import { DOT_FILES_FILTER, TheiaExplorerView } from '../theia-explorer-view';
 import { TheiaWorkspace } from '../theia-workspace';
-import { expect } from '@playwright/test';
-import test, { page } from './fixtures/theia-fixture';
 
 test.describe('Theia Workspace', () => {
 
-    test('should be initialized empty by default', async () => {
-        const app = await TheiaApp.load(page);
+    test('should be initialized empty by default', async ({ page }) => {
+        const app = await TheiaBrowserAppLoader.load(page);
         const explorer = await app.openView(TheiaExplorerView);
         const fileStatElements = await explorer.visibleFileStatNodes(DOT_FILES_FILTER);
         expect(fileStatElements.length).toBe(0);
     });
 
-    test('should be initialized with the contents of a file location', async () => {
+    test('should be initialized with the contents of a file location', async ({ page }) => {
         const ws = new TheiaWorkspace(['src/tests/resources/sample-files1']);
-        const app = await TheiaApp.load(page, ws);
+        const app = await TheiaBrowserAppLoader.load(page, ws);
         const explorer = await app.openView(TheiaExplorerView);
         const fileStatElements = await explorer.visibleFileStatNodes(DOT_FILES_FILTER);
         // resources/sample-files1 contains one folder and one file
         expect(fileStatElements.length).toBe(2);
     });
 
-    test('should be initialized with the contents of multiple file locations', async () => {
+    test('should be initialized with the contents of multiple file locations', async ({ page }) => {
         const ws = new TheiaWorkspace(['src/tests/resources/sample-files1', 'src/tests/resources/sample-files2']);
-        const app = await TheiaApp.load(page, ws);
+        const app = await TheiaBrowserAppLoader.load(page, ws);
         const explorer = await app.openView(TheiaExplorerView);
         const fileStatElements = await explorer.visibleFileStatNodes(DOT_FILES_FILTER);
         // resources/sample-files1 contains one folder and one file

@@ -1,5 +1,5 @@
 // *****************************************************************************
-// Copyright (C) 2021 logi.cals GmbH, EclipseSource and others.
+// Copyright (C) 2022 STMicroelectronics and others.
 //
 // This program and the accompanying materials are made available under the
 // terms of the Eclipse Public License v. 2.0 which is available at
@@ -15,35 +15,23 @@
 // *****************************************************************************
 
 import { expect, test } from '@playwright/test';
-import { TheiaBrowserAppLoader } from '../theia-app-loader';
-import { TheiaAboutDialog } from '../theia-about-dialog';
-import { TheiaApp } from '../theia-app';
 import { TheiaExplorerView } from '../theia-explorer-view';
-import { TheiaQuickCommandPalette } from '../theia-quick-command-palette';
+import { TheiaAboutDialog } from '../theia-about-dialog';
+import { ElectronLaunchOptions, TheiaElectronAppLoader } from '../theia-app-loader';
+import { TheiaWorkspace } from '../theia-workspace';
 
-// the tests in this file reuse a page to run faster and thus are executed serially
-test.describe.configure({ mode: 'serial' });
-test.describe('Theia Quick Command', () => {
+test.describe('Theia Electron Application', () => {
 
-    let app: TheiaApp;
-    let quickCommand: TheiaQuickCommandPalette;
+    test('should load and show main content panel', async () => {
+        const ws = new TheiaWorkspace(['src/tests/resources/sample-files1']);
+        const app = await TheiaElectronAppLoader.load(new ElectronLaunchOptions('../electron', '../../plugins'), ws);
+        expect(await app.isMainContentPanelVisible()).toBe(true);
 
-    test.beforeAll(async ({ browser }) => {
-        const page = await browser.newPage();
-        app = await TheiaBrowserAppLoader.load(page);
-        quickCommand = app.quickCommandPalette;
-    });
+        const quickCommand = app.quickCommandPalette;
 
-    test.afterAll(async () => {
-        await app.page.close();
-    });
-
-    test('should show quick command palette', async () => {
         await quickCommand.open();
         expect(await quickCommand.isOpen()).toBe(true);
-    });
 
-    test('should trigger \'About\' command after typing', async () => {
         await quickCommand.open();
         await quickCommand.type('About');
         await quickCommand.trigger('About');
@@ -56,9 +44,7 @@ test.describe('Theia Quick Command', () => {
         await quickCommand.type('Select All');
         await quickCommand.trigger('Select All');
         expect(await quickCommand.isOpen()).toBe(false);
-    });
 
-    test('should trigger \'Toggle Explorer View\' command after typing', async () => {
         await quickCommand.open();
         await quickCommand.type('Toggle Explorer');
         await quickCommand.trigger('Toggle Explorer View');

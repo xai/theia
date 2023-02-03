@@ -149,6 +149,7 @@ export class TheiaExplorerView extends TheiaView {
         } else {
             await treeNode.click({ modifiers: ['Control'] });
         }
+        await this.page.waitForSelector(this.treeNodeSelector(filePath) + '.theia-mod-selected');
     }
 
     async isTreeNodeSelected(filePath: string): Promise<boolean> {
