@@ -104,7 +104,7 @@ export class ElectronLaunchOptions {
     constructor(
         protected readonly electronAppPath: string,
         protected readonly pluginsPath?: string,
-        protected readonly additionalArgs: string[] = ['--no-cluster']
+        protected readonly additionalArgs: string[] = ['--no-cluster', '--no-native-window-frame']
     ) { }
 
     playwrightOptions(workspace?: TheiaWorkspace): object {

@@ -197,7 +197,8 @@ export class ElectronMainApplication {
     }
 
     async start(config: FrontendApplicationConfig): Promise<void> {
-        this.useNativeWindowFrame = this.getTitleBarStyle(config) === 'native';
+        const args = this.processArgv.getProcessArgvWithoutBin(process.argv);
+        this.useNativeWindowFrame = this.getTitleBarStyle(config) === 'native' && !args.includes('--no-native-window-frame');
         this._config = config;
         this.hookApplicationEvents();
         const port = await this.startBackend();
@@ -207,7 +208,7 @@ export class ElectronMainApplication {
         await this.startContributions();
         await this.launch({
             secondInstance: false,
-            argv: this.processArgv.getProcessArgvWithoutBin(process.argv),
+            argv: args,
             cwd: process.cwd()
         });
     }
@@ -305,6 +306,9 @@ export class ElectronMainApplication {
 
     async openDefaultWindow(): Promise<BrowserWindow> {
         const [uri, electronWindow] = await Promise.all([this.createWindowUri(), this.createWindow()]);
+        if (!this.useNativeWindowFrame) {
+            electronWindow.setMenuBarVisibility(false);
+        }
         electronWindow.loadURL(uri.withFragment(DEFAULT_WINDOW_HASH).toString(true));
         return electronWindow;
     }
@@ -312,6 +316,9 @@ export class ElectronMainApplication {
     protected async openWindowWithWorkspace(workspacePath: string): Promise<BrowserWindow> {
         const options = await this.getLastWindowOptions();
         const [uri, electronWindow] = await Promise.all([this.createWindowUri(), this.createWindow(options)]);
+        if (!this.useNativeWindowFrame) {
+            electronWindow.setMenuBarVisibility(false);
+        }
         electronWindow.loadURL(uri.withFragment(encodeURI(workspacePath)).toString(true));
         return electronWindow;
     }
