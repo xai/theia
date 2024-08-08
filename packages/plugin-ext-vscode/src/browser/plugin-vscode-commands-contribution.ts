@@ -525,6 +525,27 @@ export class PluginVscodeCommandsContribution implements CommandContribution {
             execute: () => commands.executeCommand(EditorCommands.GO_LAST_EDIT.id)
         });
 
+        commands.registerCommand({ id: 'workbench.action.navigateLeft' }, {
+            execute: () => {
+                this.shell.navigateLeft();
+            }
+        });
+        commands.registerCommand({ id: 'workbench.action.navigateRight' }, {
+            execute: () => {
+                this.shell.navigateRight();
+            }
+        });
+        commands.registerCommand({ id: 'workbench.action.navigateUp' }, {
+            execute: () => {
+                this.shell.navigateUp();
+            }
+        });
+        commands.registerCommand({ id: 'workbench.action.navigateDown' }, {
+            execute: () => {
+                this.shell.navigateDown();
+            }
+        });
+
         commands.registerCommand({ id: 'openInTerminal' }, {
             execute: (resource: URI) => this.terminalContribution.openInTerminal(new TheiaURI(resource.toString()))
         });

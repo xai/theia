@@ -2101,6 +2101,120 @@ export class ApplicationShell extends Widget {
         }
     }
 
+    /**
+     * Navigate to the widget on the right of the current widget.
+     */
+    navigateRight(): void {
+        this.navigate('right');
+    }
+
+    /**
+     * Navigate to the widget on the left of the current widget.
+     */
+    navigateLeft(): void {
+        this.navigate('left');
+    }
+
+    /**
+     * Navigate to the widget above the current widget.
+     */
+    navigateUp(): void {
+        this.navigate('up');
+    }
+
+    /**
+     * Navigate to the widget below the current widget.
+     */
+    navigateDown(): void {
+        this.navigate('down');
+    }
+
+    /**
+     * General navigation method based on direction.
+     */
+    protected navigate(direction: 'right' | 'left' | 'up' | 'down'): void {
+        const current = this.activeWidget;
+        if (!current) {
+            return;
+        }
+
+        const area = this.getAreaFor(current);
+        if (!area) {
+            return;
+        }
+
+        const target = this.getTargetWidget(current, area, direction);
+        if (target) {
+            this.activateWidget(target.id);
+        }
+    }
+
+    /**
+     * Get the target widget based on direction.
+     */
+    protected getTargetWidget(current: Widget, area: ApplicationShell.Area, direction: 'right' | 'left' | 'up' | 'down'): Widget | undefined {
+        const panel = this.getAreaPanelFor(current);
+        if (!panel) {
+            console.log('No panel found.');
+            return undefined;
+        }
+        const layout = panel.layout as DockLayout;
+        if (!layout) {
+            console.log('No layout found.');
+            return undefined;
+        }
+        const config = layout.saveLayout();
+        if (config.main) {
+            const targetArea = findArea(config.main, current, direction);
+            if (targetArea) {
+                return findSelectedWidget(targetArea);
+            }
+
+        }
+        return undefined;
+    }
+
+}
+
+function findSelectedWidget(areaConfig: DockLayout.AreaConfig): Widget | undefined {
+    if (areaConfig.type === 'tab-area') {
+        return areaConfig.widgets[areaConfig.currentIndex];
+    } else if (areaConfig.type === 'split-area') {
+        for (const child of areaConfig.children) {
+            const widget = findSelectedWidget(child);
+            if (widget) {
+                return widget;
+            }
+        }
+    }
+    return undefined;
+}
+function findArea(areaConfig: DockLayout.AreaConfig, widget: Widget, direction: 'right' | 'left' | 'up' | 'down'): DockLayout.AreaConfig | undefined {
+    const orientation = (direction === 'up' || direction === 'down') ? 'vertical' : 'horizontal';
+    const delta = (direction === 'up' || direction === 'left') ? -1 : 1;
+    if (areaConfig.type === 'split-area') {
+        if (areaConfig.orientation === orientation) {
+            const indexWithWidget = areaConfig.children.findIndex(child => areaContains(child, widget));
+            if (indexWithWidget + delta >= 0 && indexWithWidget + delta < areaConfig.children.length) {
+                return areaConfig.children[indexWithWidget + delta];
+            }
+        } else {
+            for (const child of areaConfig.children) {
+                if (areaContains(child, widget)) {
+                    return findArea(child, widget, direction);
+                }
+            }
+        }
+    }
+    return undefined;
+}
+function areaContains(areaConfig: DockLayout.AreaConfig, widget: Widget): boolean {
+    if (areaConfig.type === 'tab-area') {
+        return areaConfig.widgets.includes(widget);
+    } else if (areaConfig.type === 'split-area') {
+        return areaConfig.children.some(child => areaContains(child, widget));
+    }
+    return false;
 }
 
 /**
